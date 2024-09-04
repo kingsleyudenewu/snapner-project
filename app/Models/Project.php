@@ -22,4 +22,9 @@ class Project extends Model
     {
         return $this->belongsToMany(Employee::class);
     }
+
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
 }

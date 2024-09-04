@@ -31,13 +31,13 @@ class ProjectController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $projectData = ProjectData::from($request);
 
-        Project::create($projectData->toArray());
+        $project = Project::create($projectData->toArray());
 
-        return $this->createdResponse('Complaint created successfully', new ProjectResource($projectData));
+        return $this->createdResponse('Complaint created successfully', new ProjectResource($project));
     }
 
     /**
@@ -60,9 +60,11 @@ class ProjectController extends Controller
             abort(403, 'You are not authorized to update this project');
         }
 
-        $projectData = ProjectData::from($request);
+        $validatedData = $request->validate(ProjectData::rules($project->id));
 
-        $project->update($projectData->toArray());
+        $data = ProjectData::from(collect($validatedData)->toArray());
+
+        $project->update($data->toArray());
 
         return $this->successResponse('Project updated successfully', new ProjectResource($project));
     }

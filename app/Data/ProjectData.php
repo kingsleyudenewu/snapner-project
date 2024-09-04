@@ -23,10 +23,10 @@ class ProjectData extends Data
         return true;
     }
 
-    public static function rules(): array
+    public static function rules(?int $projectId = null): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:projects,name'],
+            'name' => ['required', 'string', 'max:255', Rule::unique('projects', 'name')->ignore($projectId)],
             'owner_id' => ['required', 'integer', 'exists:users,id'],
             'description' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::enum(StatusEnum::class)],

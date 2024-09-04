@@ -52,7 +52,7 @@ it('can retrieve a project', function () {
     $this->withoutExceptionHandling();
     $project = Project::factory()->create();
 
-    $response = $this->actingAs($this->user)->getJson("/api/projects/1");
+    $response = $this->actingAs($this->user)->getJson("/api/projects/{$project->id}");
 
     $response->assertStatus(200)
         ->assertJsonFragment(['name' => $project->name]);

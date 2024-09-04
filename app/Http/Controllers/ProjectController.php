@@ -12,9 +12,17 @@ class ProjectController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $projects = Project::paginate();
+        $name = $request->query('name');
+        $status = $request->query('status');
+
+        // Query projects with filters
+        $projects = Project::when($name, function($query, $name) {
+            return $query->where('name', 'like', '%' . $name . '%');
+        })->when($status, function($query, $status) {
+            return $query->where('status', $status);
+        })->paginate();
 
         return $this->successResponse('Projects retrieved successfully', ProjectResource::collection($projects));
     }

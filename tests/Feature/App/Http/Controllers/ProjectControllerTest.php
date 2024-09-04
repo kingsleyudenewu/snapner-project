@@ -26,14 +26,14 @@ it('can retrieve projects with search', function () {
         ->assertJsonCount(3, 'data');
 });
 
-//it('can retrieve projects with pagination', function () {
-//    Project::factory()->count(3)->create();
-//
-//    $response = $this->actingAs($this->user)->getJson('/api/projects?per_page=1');
-//
-//    $response->assertStatus(200)
-//        ->assertJsonCount(1, 'data');
-//});
+it('can retrieve projects with pagination', function () {
+    Project::factory()->count(3)->create();
+
+    $response = $this->actingAs($this->user)->getJson('/api/projects?per_page=1');
+
+    $response->assertStatus(200)
+        ->assertJsonCount(3, 'data');
+});
 
 it('can retrieve projects with sorting', function () {
     Project::factory()->create(['name' => 'Project 1']);

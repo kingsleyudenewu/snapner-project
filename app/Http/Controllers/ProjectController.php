@@ -56,6 +56,10 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project): \Illuminate\Http\JsonResponse
     {
+        if ($request->user()->cannot('update', $project)) {
+            abort(403, 'You are not authorized to update this project');
+        }
+
         $projectData = ProjectData::from($request);
 
         $project->update($projectData->toArray());
@@ -70,8 +74,42 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): \Illuminate\Http\JsonResponse
     {
+        if (request()->user()->cannot('delete', $project)) {
+            abort(403, 'You are not authorized to delete this project');
+        }
+
         $project->delete();
 
         return $this->successResponse('Project deleted successfully');
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function summary(Request $request)
+    {
+        $summary = Project::selectRaw('COUNT(*) as total_projects')
+            ->selectRaw('(SELECT COUNT(*) FROM employees) as total_employees')
+            ->selectRaw('status, COUNT(*) as total_by_status')
+            ->groupBy('status')
+            ->get();
+
+        // Separate the total projects and total employees
+        $totalProjects = $summary->first()->total_projects;
+        $totalEmployees = $summary->first()->total_employees;
+
+        // Extract the projects grouped by status
+        $projectsGroupedByStatus = $summary->map(function ($item) {
+            return [
+                'status' => $item->status,
+                'total' => $item->total_by_status
+            ];
+        });
+
+        return $this->successResponse('Projects summary retrieved successfully', [
+            'total_projects' => $totalProjects,
+            'total_employees' => $totalEmployees,
+            'projects_grouped_by_status' => $projectsGroupedByStatus
+        ]);
     }
 }

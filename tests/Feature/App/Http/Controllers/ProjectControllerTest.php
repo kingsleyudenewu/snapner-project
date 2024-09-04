@@ -49,7 +49,6 @@ it('can retrieve projects with sorting', function () {
 });
 
 it('can retrieve a project', function () {
-    $this->withoutExceptionHandling();
     $project = Project::factory()->create();
 
     $response = $this->actingAs($this->user)->getJson("/api/projects/{$project->id}");
@@ -71,7 +70,6 @@ it('can create a project', function () {
 });
 
 it('can update a project', function () {
-    $this->withoutExceptionHandling();
     $project = Project::factory()->create([
         'name' => 'Project 2',
         'description' => 'Project 2 description',

@@ -29,7 +29,7 @@ class ProjectController extends Controller
 
         Project::create($projectData->toArray());
 
-        return $this->createdResponse('Complaint created successfully');
+        return $this->createdResponse('Complaint created successfully', new ProjectResource($projectData));
     }
 
     /**

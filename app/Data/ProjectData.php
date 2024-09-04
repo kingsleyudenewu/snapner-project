@@ -11,6 +11,7 @@ class ProjectData extends Data
 {
     public function __construct(
         public string $name,
+        public int $owner_id,
         public string $description,
         public string $status,
         public string $start_date,
@@ -26,6 +27,7 @@ class ProjectData extends Data
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:projects,name'],
+            'owner_id' => ['required', 'integer', 'exists:users,id'],
             'description' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::enum(StatusEnum::class)],
             'start_date' => ['required', 'date'],

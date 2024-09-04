@@ -17,7 +17,12 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'owner_id' => \App\Models\User::factory(),
+            'description' => $this->faker->text,
+            'status' => \App\Enums\StatusEnum::PENDING,
+            'start_date' => $this->faker->dateTime,
+            'end_date' => $this->faker->dateTime,
         ];
     }
 }

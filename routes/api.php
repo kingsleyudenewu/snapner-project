@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{project}', [ProjectController::class, 'show'])->name('show');
         Route::put('/{project}', [ProjectController::class, 'update'])->name('update');
         Route::delete('/{project}', [ProjectController::class, 'destroy'])->name('destroy');
+        Route::get('/summary', [ProjectController::class, 'summary'])->name('summary');
     });
 
     // create a new route group for employee controllers
@@ -39,5 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{employee}', [EmployeeController::class, 'show'])->name('show');
         Route::put('/{employee}', [EmployeeController::class, 'update'])->name('update');
         Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
+        Route::post('/employees/{id}/restore', [EmployeeController::class, 'restore'])->name('restore');
     });
 });

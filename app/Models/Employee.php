@@ -10,4 +10,11 @@ class Employee extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected $guarded = ['id'];
+
+    public function project(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

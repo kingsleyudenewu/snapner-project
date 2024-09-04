@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Data\EmployeeData;
 use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
+use App\Notifications\WelcomeEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,6 +32,8 @@ class EmployeeController extends Controller
         $employeeData = EmployeeData::from($request);
 
         $employee = Employee::create($employeeData->toArray());
+
+        $employee->notify(new WelcomeEmployee($employee));
 
         return $this->createdResponse('Employee created successfully', new EmployeeResource($employee));
     }
@@ -67,5 +70,22 @@ class EmployeeController extends Controller
         $employee->delete();
 
         return $this->successResponse('Employee deleted successfully');
+    }
+
+    /**
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function restore(int $id): \Illuminate\Http\JsonResponse
+    {
+        $employee = Employee::withTrashed()->findOrFail($id);
+
+        if (!$employee) {
+            return $this->notFoundResponse('Employee is not deleted');
+        }
+
+        $employee->restore();
+
+        return $this->successResponse('Employee restored successfully');
     }
 }

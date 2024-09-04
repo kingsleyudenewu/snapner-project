@@ -25,7 +25,7 @@ class ProjectData extends Data
     public static function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:projects,name'],
             'description' => ['required', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::enum(StatusEnum::class)],
             'start_date' => ['required', 'date'],

@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use Illuminate\Validation\Rule;
 use Spatie\LaravelData\Data;
 
 class EmployeeData extends Data
@@ -13,12 +14,12 @@ class EmployeeData extends Data
         public string $position,
     ) {}
 
-    public static function rules(): array
+    public static function rules(?int $employeeId = null): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
             'project_id' => ['required', 'integer', 'exists:projects,id'],
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('employees', 'email')->ignore($employeeId)],
             'position' => ['required', 'string', 'max:255'],
         ];
     }

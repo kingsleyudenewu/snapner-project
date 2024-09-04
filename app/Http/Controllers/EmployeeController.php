@@ -6,6 +6,7 @@ use App\Data\EmployeeData;
 use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class EmployeeController extends Controller
 {
@@ -14,7 +15,9 @@ class EmployeeController extends Controller
      */
     public function index(): \Illuminate\Http\JsonResponse
     {
-        $employees = Employee::paginate();
+        $employees = Cache::remember('users', now()->addMinutes(15), function () {
+            return Employee::with('project')->paginate();
+        });
 
         return $this->successResponse('Employees retrieved successfully', EmployeeResource::collection($employees));
     }
@@ -48,9 +51,9 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee): \Illuminate\Http\JsonResponse
     {
-        $employeeData = EmployeeData::from($request);
-
-        $employee->update($employeeData->toArray());
+        $validatedData = $request->validate(EmployeeData::rules($employee->id));
+        $data = EmployeeData::from(...$validatedData);
+        $employee->update($data->toArray());
 
         return $this->successResponse('Employee updated successfully', new EmployeeResource($employee));
     }

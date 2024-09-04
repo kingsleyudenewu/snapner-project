@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('owner_id')->constrained('users');
             $table->string('name')->unique();
             $table->text('description');
             $table->string('status')->default(StatusEnum::PENDING->value);

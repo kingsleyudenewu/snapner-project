@@ -36,3 +36,32 @@ it('can logout a user', function () {
     $response->assertStatus(200)
         ->assertJson(['message' => 'User Logged Out Successfully']);
 });
+
+// write a test for login validation
+it('can validate login request', function () {
+    $this->withoutExceptionHandling();
+    $response = $this->postJson('/api/auth/login', [
+        'email' => '',
+        'password' => '',
+    ]);
+
+    $response->assertStatus(400)
+        ->assertJson(
+            fn (AssertableJson $json) => $json->has('status')->has('message')
+        )
+        ->assertJsonFragment(['message' => 'Invalid login credentials']);
+});
+
+// write a test for registration validation
+it('can validate registration request', function () {
+    $response = $this->postJson('/api/auth/register', [
+        'name' => '',
+        'email' => '',
+        'password' => '',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonFragment(['message' => 'Validation error']);
+});
+
+

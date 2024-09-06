@@ -9,6 +9,10 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Traits\HasApiResponse;
 
+$hasApiResponse = new class {
+    use HasApiResponse;
+};
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -19,20 +23,20 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-//        $exceptions->render(function (NotFoundHttpException $e) {
-//            return $this->notFoundResponse('Resource not found.');
-//        });
-//
-//        $exceptions->render(function (ValidationException $e) {
-//            return $this->formValidationErrorResponse($e->errors());
-//        });
-//
-//        $exceptions->render(function (AuthenticationException $e) {
-//            return $this->badRequestResponse($e->getMessage());
-//        });
-//
-//        $exceptions->render(function (UnauthorizedException $e) {
-//            return $this->badRequestResponse($e->getMessage());
-//        });
+    ->withExceptions(function (Exceptions $exceptions) use ($hasApiResponse) {
+        $exceptions->render(function (NotFoundHttpException $e) use ($hasApiResponse) {
+            return $hasApiResponse->notFoundResponse('Resource not found.');
+        });
+
+        $exceptions->render(function (ValidationException $e) use ($hasApiResponse) {
+            return $hasApiResponse->formValidationErrorResponse($e->errors());
+        });
+
+        $exceptions->render(function (AuthenticationException $e) use ($hasApiResponse) {
+            return $hasApiResponse->badRequestResponse($e->getMessage());
+        });
+
+        $exceptions->render(function (UnauthorizedException $e) use ($hasApiResponse) {
+            return $hasApiResponse->badRequestResponse($e->getMessage());
+        });
     })->create();
